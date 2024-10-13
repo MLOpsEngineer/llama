@@ -76,7 +76,7 @@ class LlamaRMSNorm(nn.Module):
         LlamaRMSNorm은 T5LayerNorm과 동일한 역할을 하는 RMSNorm 레이어입니다.
 
         파라미터:
-        - hidden_size (int): 히든 사이즈, 즉 임베딩 벡터의 차원입니다.
+        - hidden_size (int): 히든 사이즈, 첫번째 레이어에서는 임베딩 벡터의 차원이고 이후 레이어에서는 이전 레이어의 출력이 됩니다.
         - eps (float): 분산 계산 시 0으로 나누는 것을 방지하기 위한 작은 값입니다.
         """
         super().__init__()
@@ -98,7 +98,7 @@ class LlamaRMSNorm(nn.Module):
         input_dtype = hidden_states.dtype  # 입력의 데이터 타입을 저장합니다.
         hidden_states = hidden_states.to(
             torch.float32
-        )  # float32 타입으로 변환하여 연산합니다.
+        )  # float32 타입으로 변환하여 수치적 안정성을 확보하기 위해 연산 중에는 더 높은 정밀도로 계산합니다.
         variance = hidden_states.pow(2).mean(
             -1, keepdim=True
         )  # 마지막 차원에 대한 분산을 계산합니다.
@@ -107,7 +107,7 @@ class LlamaRMSNorm(nn.Module):
         )  # 정규화합니다.
         return self.weight * hidden_states.to(
             input_dtype
-        )  # 원래 데이터 타입으로 변환하고 가중치를 곱합니다.
+        )  # 메모리와 성능을 효율화하기 위해 다시 원래의 데이터 형식으로 변환하여 가중치와 곱합니다.
 
     def extra_repr(self):
         return f"{tuple(self.weight.shape)}, eps={self.variance_epsilon}"  # 레이어의 추가 정보를 문자열로 반환합니다.
