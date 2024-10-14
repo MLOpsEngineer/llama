@@ -134,7 +134,7 @@ class LlamaRotaryEmbedding(nn.Module):
         파라미터:
         - dim (int): 임베딩 차원 수입니다.
         - max_position_embeddings (int): 최대 포지션 임베딩 길이입니다.
-        - base (int): 주파수 스케일링을 위한 기본값입니다.
+        - base (int): 주파수 스케일링을 위한 값으로 작은 값을 사용하면 ₩
         - device (torch.device): 연산이 수행될 디바이스입니다.
         - scaling_factor (float): 스케일링 팩터입니다.
         - rope_type (str): RoPE의 유형입니다.
